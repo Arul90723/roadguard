@@ -4,6 +4,7 @@ import { DemoBanner } from './components/DemoBanner';
 import { ProximityAlertBanner } from './components/ProximityAlertBanner';
 import { Navbar } from './components/Navbar';
 import { IncidentModal } from './components/IncidentModal';
+import { AuthModal } from './components/AuthModal';
 import { LandingPage } from './pages/LandingPage';
 import { MapPage } from './pages/MapPage';
 import { ReportHazardPage } from './pages/ReportHazardPage';
@@ -15,12 +16,13 @@ import { fetchIncidents, fetchRoadSegments, fetchDashboardStats, updateIncidentS
 import { DashboardStats, Incident, IncidentStatus, RoadSegment } from './types';
 
 const MainApp: React.FC = () => {
-  const { currentUser } = useAuth();
+  const { currentUser, firebaseUser } = useAuth();
   const [activeTab, setActiveTab] = useState<string>('home');
   const [incidents, setIncidents] = useState<Incident[]>([]);
   const [roadSegments, setRoadSegments] = useState<RoadSegment[]>([]);
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [selectedIncident, setSelectedIncident] = useState<Incident | null>(null);
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState<boolean>(false);
 
   const loadData = async () => {
     try {
@@ -88,8 +90,12 @@ const MainApp: React.FC = () => {
         onSelectIncident={incident => setSelectedIncident(incident)}
       />
 
-      {/* Navbar */}
-      <Navbar activeTab={activeTab} setActiveTab={setActiveTab} />
+      {/* Navbar with Auth Trigger */}
+      <Navbar
+        activeTab={activeTab}
+        setActiveTab={setActiveTab}
+        onOpenAuth={() => setIsAuthModalOpen(true)}
+      />
 
       {/* Main Content Area */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
@@ -151,6 +157,12 @@ const MainApp: React.FC = () => {
         userRole={currentUser?.role}
         onUpdateStatus={handleUpdateStatus}
         onReopenIncident={handleReopen}
+      />
+
+      {/* Dedicated Firebase Authentication Modal */}
+      <AuthModal
+        isOpen={isAuthModalOpen}
+        onClose={() => setIsAuthModalOpen(false)}
       />
 
       {/* Footer */}

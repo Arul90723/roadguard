@@ -9,16 +9,20 @@ import {
   FileText,
   Menu,
   X,
-  Compass
+  Compass,
+  User,
+  LogIn,
+  LogOut
 } from 'lucide-react';
 
 interface Props {
   activeTab: string;
   setActiveTab: (tab: string) => void;
+  onOpenAuth: () => void;
 }
 
-export const Navbar: React.FC<Props> = ({ activeTab, setActiveTab }) => {
-  const { currentUser } = useAuth();
+export const Navbar: React.FC<Props> = ({ activeTab, setActiveTab, onOpenAuth }) => {
+  const { currentUser, firebaseUser, signOut } = useAuth();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const navItems = [
@@ -107,10 +111,40 @@ export const Navbar: React.FC<Props> = ({ activeTab, setActiveTab }) => {
                 </button>
               );
             })}
+
+            {/* Prominent Authentication Button */}
+            <div className="pl-2 border-l border-slate-800 ml-1">
+              {firebaseUser ? (
+                <button
+                  onClick={onOpenAuth}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-navy-800 hover:bg-navy-700 border border-slate-700 text-xs font-semibold text-cyan-300"
+                >
+                  <div className="w-5 h-5 rounded-full bg-cyan-500 text-navy-950 flex items-center justify-center font-bold text-[10px]">
+                    {firebaseUser.displayName?.charAt(0) || 'U'}
+                  </div>
+                  <span className="max-w-[90px] truncate">{firebaseUser.displayName || 'Account'}</span>
+                </button>
+              ) : (
+                <button
+                  onClick={onOpenAuth}
+                  className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-cyan-950/90 hover:bg-cyan-900 border border-cyan-500/50 text-cyan-300 text-xs font-bold transition-all shadow-sm"
+                >
+                  <LogIn className="w-3.5 h-3.5 text-cyan-400" />
+                  <span>Sign In</span>
+                </button>
+              )}
+            </div>
           </div>
 
           {/* Mobile Menu Toggle */}
-          <div className="flex md:hidden">
+          <div className="flex md:hidden items-center gap-2">
+            <button
+              onClick={onOpenAuth}
+              className="p-1.5 px-2.5 rounded-lg bg-navy-800 border border-slate-700 text-cyan-400 text-xs font-semibold flex items-center gap-1"
+            >
+              <LogIn className="w-3.5 h-3.5" />
+              <span>{firebaseUser ? 'Account' : 'Login'}</span>
+            </button>
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               className="p-2 rounded-lg text-slate-400 hover:text-white hover:bg-navy-800"

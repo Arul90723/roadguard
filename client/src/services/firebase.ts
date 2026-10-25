@@ -35,6 +35,16 @@ export async function loginWithGoogle() {
   }
 }
 
+export async function loginWithEmail(email: string, pass: string) {
+  const result = await signInWithEmailAndPassword(auth, email, pass);
+  return result.user;
+}
+
+export async function registerWithEmail(email: string, pass: string) {
+  const result = await createUserWithEmailAndPassword(auth, email, pass);
+  return result.user;
+}
+
 export async function logoutFirebase() {
   await firebaseSignOut(auth);
 }
