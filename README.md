@@ -1,7 +1,20 @@
 # 🛡️ RoadGuard — Smart Road Safety & Infrastructure Intelligence Platform
 
+[![Google Cloud Run](https://img.shields.io/badge/Google%20Cloud%20Run-Live-4285F4?logo=googlecloud&logoColor=white)](https://roadguard-983953515631.asia-south1.run.app/)
+[![Google Maps](https://img.shields.io/badge/Google%20Maps-Platform-34A853?logo=googlemaps&logoColor=white)](https://roadguard-983953515631.asia-south1.run.app/)
+[![Firebase Auth](https://img.shields.io/badge/Firebase-Authentication-FFCA28?logo=firebase&logoColor=black)](https://roadguard-983953515631.asia-south1.run.app/)
+[![PostgreSQL PostGIS](https://img.shields.io/badge/Cloud%20SQL-PostgreSQL%20%2B%20PostGIS-336791?logo=postgresql&logoColor=white)](https://roadguard-983953515631.asia-south1.run.app/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+
 > **"Safer Roads. Smarter Routes. Faster Repairs."**  
 > Community-powered hazard detection, camera-verified reporting, hazard-aware routing, and municipal maintenance dispatch.
+
+---
+
+## 🌐 Live Production Deployment
+* **Live Application**: [https://roadguard-983953515631.asia-south1.run.app/](https://roadguard-983953515631.asia-south1.run.app/)
+* **Health Check & Cloud Telemetry**: [https://roadguard-983953515631.asia-south1.run.app/api/health](https://roadguard-983953515631.asia-south1.run.app/api/health)
+* **Sample Geospatial Region**: Kochi & Ernakulam Metropolitan Area, Kerala, India
 
 ---
 
@@ -15,7 +28,7 @@ DETECT ➔ REPORT ➔ VERIFY ➔ PRIORITISE ➔ ALERT ➔ REPAIR ➔ RE-VERIFY
 ```
 
 ### Three User Personas:
-1. **Citizen / Traveller**: Discovers real-time road hazards, captures verified camera evidence, compares hazard-weighted safe routes, and logs vehicle motion impacts.
+1. **Citizen / Traveller**: Discovers real-time road hazards, captures camera evidence with locked GPS, compares hazard-weighted safe routes, and logs vehicle motion impacts.
 2. **Authority / Maintenance Official (PWD / KSEB / Water Authority)**: Triages incidents via an operations queue, reviews crowd corroboration, sets target repair deadlines, and dispatches field squads.
 3. **Administrator**: Oversees statewide road safety KPIs, monitors recurring defect corridors, and audits repair certifications.
 
@@ -26,19 +39,21 @@ DETECT ➔ REPORT ➔ VERIFY ➔ PRIORITISE ➔ ALERT ➔ REPAIR ➔ RE-VERIFY
 - **Frontend**: React 18 + Vite + TypeScript
 - **Styling**: Tailwind CSS (Dark navy aesthetic, high-contrast hazard color coding)
 - **Icons**: Lucide React
-- **Geospatial & Maps**: Leaflet + OpenStreetMap (CartoDB Dark Matter tiles)
+- **Geospatial & Maps**: Google Maps Platform JavaScript API (Dark Navy Night Mode, Satellite/Hybrid view, and Live Google Traffic Layer)
 - **Camera Capture**: Browser `MediaDevices.getUserMedia` (Strict live viewfinder, gallery upload disabled for integrity)
-- **Motion Telemetry**: Browser `DeviceMotionEvent` (Accelerometer norm & gyroscope yaw velocity)
+- **Motion Telemetry**: Browser `DeviceMotionEvent` (Accelerometer vector norm & gyroscope yaw velocity)
+- **Authentication**: Firebase Authentication (Google Sign-In + Email/Password + Server-side Firebase Admin SDK verification)
 - **Backend**: Node.js + Express + TypeScript
-- **Database**: PostgreSQL 15+ with PostGIS spatial extension (with seamless zero-dependency In-Memory demo engine)
-- **Routing**: OSRM (Open Source Routing Machine) driving engine + synthetic geometric corridor fallback
+- **Database**: Google Cloud SQL (PostgreSQL 15 + PostGIS spatial extension) with built-in zero-dependency In-Memory demo engine fallback
+- **Object Storage**: Google Cloud Storage (`gs://roadguard-photos-512703`)
+- **Routing**: OSRM driving engine + synthetic geometric corridor fallback
 - **Containerization**: Multi-stage Dockerfile optimized for Google Cloud Run
 
 ---
 
 ## 🚀 3. Quickstart (Run Locally in Seconds)
 
-RoadGuard is designed with a **Zero-Config Guarantee**: it requires **no external PostgreSQL or Firebase credentials** to run immediately.
+RoadGuard is designed with a **Zero-Config Guarantee**: it requires **no external credentials** to run immediately on localhost.
 
 ### Prerequisites:
 - Node.js 18+ (tested on Node v20/v24)
@@ -46,7 +61,6 @@ RoadGuard is designed with a **Zero-Config Guarantee**: it requires **no externa
 
 ### Step 1: Install Dependencies
 ```bash
-# From the project root
 npm run install:all
 ```
 
@@ -57,14 +71,11 @@ npm run build
 
 ### Step 3: Start the Application
 ```bash
-# Starts the unified server on port 5000 (serves backend API and client frontend)
 npm start
 ```
 
 Open your browser to:
 👉 **[http://localhost:5000](http://localhost:5000)**
-
-*(For active hot-reloading development, run `npm run dev:client` and `npm run dev:server` in separate terminals).*
 
 ---
 
@@ -73,8 +84,11 @@ Open your browser to:
 Follow this checklist during your hackathon demo:
 
 - [ ] **Landing Page**: Observe the dark navy theme, live KPI statistics, and 7-stage workflow explanation.
-- [ ] **Demo Mode Switcher**: In the top banner, switch between **Citizen (Rahul)**, **Authority (Er. Ananya Pillai)**, and **Admin**. Notice the active sample zone: *Kochi, Kerala*.
-- [ ] **Interactive Road Map**:
+- [ ] **Firebase Authentication**: Click **"Sign In"** in the top navigation bar to authenticate with a real Google account via Firebase, or use the instant demo role switcher.
+- [ ] **Google Maps Hazard Radar**:
+  - Open **"Road Map"** to interact with Google Maps.
+  - Toggle between **Map** and **Satellite** views.
+  - Click **"Live Google Traffic"** to display real-time congestion overlays.
   - Filter hazards by category (*Fallen Electrical Wire*, *Pothole*, *Waterlogging*).
   - Filter by severity (*Critical*, *High*, *Moderate*, *Low*).
   - Click on a marker to open the detailed modal.
@@ -106,19 +120,8 @@ Follow this checklist during your hackathon demo:
 
 ## 🗄️ 5. Database Schema & PostGIS Setup
 
-When ready to connect a production **Google Cloud SQL PostgreSQL** instance:
-
-### Step 1: Create Database with PostGIS
-```sql
-CREATE DATABASE roadguard;
-\c roadguard;
-CREATE EXTENSION IF NOT EXISTS postgis;
-CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
-```
-
-### Step 2: Run DDL Migrations
-The complete migration script is located at:
-📁 `server/src/db/schema.sql`
+The complete PostgreSQL + PostGIS DDL migration script is located at:
+📁 [`server/src/db/schema.sql`](server/src/db/schema.sql)
 
 It provisions:
 - `users`
@@ -131,67 +134,34 @@ It provisions:
 - `road_segments` (corridors with risk scores)
 - `notification_records`
 
-### Step 3: Configure Environment
-Set `DATABASE_URL` in your `.env` file:
-```env
-DATABASE_URL=postgresql://roadguard_user:your_password@127.0.0.1:5432/roadguard
-```
-
 ---
 
 ## ☁️ 6. Google Cloud Run Deployment
 
-RoadGuard is engineered for zero-friction deployment to **Google Cloud Run**.
+RoadGuard is containerized for zero-friction deployment to Google Cloud Run.
 
-### Option A: Direct Deployment via Google Cloud SDK
 ```bash
-# 1. Login to Google Cloud
-gcloud auth login
-gcloud config set project YOUR_GCP_PROJECT_ID
-
-# 2. Build and Deploy directly from source
+# Deploy directly from repository root
 gcloud run deploy roadguard \
   --source . \
   --platform managed \
   --region asia-south1 \
-  --allow-unauthenticated \
-  --set-env-vars NODE_ENV=production,PORT=8080
-```
-
-### Option B: Build Container with Docker
-```bash
-# Build production multi-stage image
-docker build -t gcr.io/YOUR_GCP_PROJECT_ID/roadguard:v1 .
-
-# Push to Google Artifact Registry
-docker push gcr.io/YOUR_GCP_PROJECT_ID/roadguard:v1
-
-# Deploy image to Cloud Run
-gcloud run deploy roadguard \
-  --image gcr.io/YOUR_GCP_PROJECT_ID/roadguard:v1 \
-  --region asia-south1 \
-  --port 8080 \
   --allow-unauthenticated
-```
-
-### Cloud Run Health Check Endpoint:
-```
-GET /api/health
 ```
 
 ---
 
 ## 🔒 7. Security & Cloud Architecture Notes
 
-1. **No Sensitive Keys in Frontend**: No Firebase admin secrets, service account JSONs, or database passwords exist in frontend client code.
-2. **Billing Safety**: No billable cloud resources are provisioned automatically. All third-party adapters degrade gracefully to high-fidelity demo modes when cloud credentials are unconfigured.
-3. **Evidence Authenticity**: Camera-only captures with client GPS stamps are treated as supporting evidence rather than unquestioned proof, undergoing spatial proximity validation on the backend.
+1. **Zero-Trust Token Verification**: Every administrative action is validated server-side on Google Cloud Run using the Firebase Admin SDK.
+2. **Billing Safety**: No billable cloud resources are provisioned automatically.
+3. **Evidence Authenticity**: Camera-only captures with client GPS stamps prevent forged reports, undergoing spatial proximity validation on the backend.
 
 ---
 
 ## 👥 8. Kerala Demonstration Dataset
 
-To provide immediate utility upon launching, the platform comes pre-seeded with 10 realistic road hazards located in **Kochi & Ernakulam Metropolitan Area, Kerala**:
+Pre-seeded with 10 realistic road hazards located in **Kochi & Ernakulam Metropolitan Area, Kerala**:
 - **INC-KL-001**: Critical live snapped electric line on MG Road Shenoys.
 - **INC-KL-002**: Rim-damaging pothole cluster on Edappally Toll Junction (multiple citizen reports attached).
 - **INC-KL-003**: Stormwater inundation at Vyttila Mobility Hub.
@@ -207,5 +177,5 @@ To provide immediate utility upon launching, the platform comes pre-seeded with 
 
 ---
 
-## 🏆 Hackathon MVP Status: 100% Functional & Demonstrable
-Designed, built, and verified for the hackathon submission deadline.
+## 📄 License
+This project is open-source and available under the [MIT License](LICENSE).
