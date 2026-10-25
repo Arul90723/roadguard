@@ -3,7 +3,7 @@
 FROM node:20-alpine AS client-builder
 WORKDIR /app/client
 COPY client/package*.json ./
-RUN npm ci --silent
+RUN npm install
 COPY client/ ./
 RUN npm run build
 
@@ -11,7 +11,7 @@ RUN npm run build
 FROM node:20-alpine AS server-builder
 WORKDIR /app/server
 COPY server/package*.json ./
-RUN npm ci --silent
+RUN npm install
 COPY server/ ./
 RUN npm run build
 
@@ -25,7 +25,7 @@ ENV PORT=8080
 # Copy server package and production dependencies
 WORKDIR /app/server
 COPY server/package*.json ./
-RUN npm ci --only=production --silent
+RUN npm install --omit=dev
 
 # Copy compiled backend
 COPY --from=server-builder /app/server/dist ./dist
@@ -39,10 +39,6 @@ COPY --from=client-builder /app/client/dist ./client/dist
 RUN mkdir -p /app/server/uploads
 
 EXPOSE 8080
-
-# Cloud Run health check
-HEALTHCHECK --interval=30s --timeout=5s --start-period=5s --retries=3 \
-  CMD wget --no-verbose --tries=1 --spider http://localhost:8080/api/health || exit 1
 
 WORKDIR /app/server
 CMD ["node", "dist/index.js"]
