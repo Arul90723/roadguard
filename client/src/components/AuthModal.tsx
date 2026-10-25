@@ -10,7 +10,9 @@ import {
   UserCheck,
   AlertCircle,
   CheckCircle2,
-  LogIn
+  LogIn,
+  KeyRound,
+  Sparkles
 } from 'lucide-react';
 
 interface Props {
@@ -76,26 +78,26 @@ export const AuthModal: React.FC<Props> = ({ isOpen, onClose }) => {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-navy-950/80 backdrop-blur-sm">
-      <div className="relative w-full max-w-md bg-navy-900 border border-slate-700 rounded-3xl shadow-2xl overflow-hidden text-slate-100 animate-in fade-in zoom-in-95 duration-200">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-navy-950/85 backdrop-blur-md animate-fade-in">
+      <div className="relative w-full max-w-md glass-panel border border-slate-700/80 rounded-3xl shadow-2xl overflow-hidden text-slate-100">
         {/* Header */}
-        <div className="p-5 border-b border-slate-800 flex items-center justify-between bg-navy-950/60">
-          <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-cyan-500 to-blue-600 flex items-center justify-center">
-              <Shield className="w-4 h-4 text-navy-950 stroke-[2.5]" />
+        <div className="p-5 sm:p-6 border-b border-slate-800 flex items-center justify-between bg-navy-950/70">
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-cyan-500 to-blue-600 flex items-center justify-center shadow-glow-cyan">
+              <Shield className="w-5 h-5 text-navy-950 stroke-[2.5]" />
             </div>
             <div>
-              <h3 className="font-bold text-sm text-white font-mono">
-                ROADGUARD AUTHENTICATION
+              <h3 className="font-bold text-sm text-white font-mono tracking-wide">
+                ROADGUARD CITIZEN AUTH
               </h3>
               <p className="text-[11px] text-slate-400">
-                Sign in with Google, Firebase, or Quick Demo
+                Official Firebase & Google Identity Provider
               </p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-1 rounded-lg text-slate-400 hover:text-white hover:bg-navy-800"
+            className="p-1.5 rounded-xl text-slate-400 hover:text-white hover:bg-navy-800 transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
@@ -104,14 +106,15 @@ export const AuthModal: React.FC<Props> = ({ isOpen, onClose }) => {
         {/* Current User State if logged in */}
         {firebaseUser ? (
           <div className="p-6 text-center space-y-4">
-            <div className="w-14 h-14 rounded-full bg-cyan-950 border-2 border-cyan-400 mx-auto flex items-center justify-center text-cyan-400 text-lg font-bold">
+            <div className="w-16 h-16 rounded-full bg-cyan-950 border-2 border-cyan-400 mx-auto flex items-center justify-center text-cyan-400 text-xl font-bold shadow-glow-cyan">
               {firebaseUser.displayName?.charAt(0) || firebaseUser.email?.charAt(0) || 'U'}
             </div>
             <div>
-              <div className="text-sm font-bold text-white">{firebaseUser.displayName || 'Google Account User'}</div>
-              <div className="text-xs text-slate-400">{firebaseUser.email}</div>
-              <span className="inline-block mt-2 px-2.5 py-0.5 rounded-full bg-emerald-950 text-emerald-300 border border-emerald-500/40 text-[11px] font-semibold">
-                Firebase Authenticated
+              <div className="text-base font-bold text-white">{firebaseUser.displayName || 'Google Account User'}</div>
+              <div className="text-xs text-slate-400 font-mono mt-0.5">{firebaseUser.email}</div>
+              <span className="inline-flex items-center gap-1.5 mt-2.5 px-3 py-1 rounded-full bg-emerald-950/80 text-emerald-300 border border-emerald-500/40 text-[11px] font-semibold">
+                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+                Firebase ID Verified
               </span>
             </div>
             <button
@@ -119,15 +122,15 @@ export const AuthModal: React.FC<Props> = ({ isOpen, onClose }) => {
                 signOut();
                 onClose();
               }}
-              className="w-full py-2.5 rounded-xl bg-red-600 hover:bg-red-500 text-white font-bold text-xs transition-colors"
+              className="w-full py-3 rounded-2xl bg-red-600 hover:bg-red-500 text-white font-bold text-xs shadow-lg shadow-red-950/50 transition-all"
             >
-              Sign Out
+              Sign Out from Device
             </button>
           </div>
         ) : (
           <div className="p-6 space-y-5">
             {errorMsg && (
-              <div className="p-3 rounded-xl bg-red-950/80 border border-red-500/50 text-red-300 text-xs flex items-center gap-2">
+              <div className="p-3.5 rounded-2xl bg-red-950/80 border border-red-500/50 text-red-300 text-xs flex items-center gap-2">
                 <AlertCircle className="w-4 h-4 text-red-400 shrink-0" />
                 <span>{errorMsg}</span>
               </div>
@@ -138,7 +141,7 @@ export const AuthModal: React.FC<Props> = ({ isOpen, onClose }) => {
               type="button"
               onClick={handleGoogleClick}
               disabled={isLoading}
-              className="w-full py-3 px-4 rounded-xl bg-white hover:bg-slate-100 text-navy-950 font-bold text-xs flex items-center justify-center gap-2.5 shadow-md transition-all active:scale-[0.99]"
+              className="w-full py-3 px-4 rounded-2xl bg-white hover:bg-slate-100 text-navy-950 font-black text-xs flex items-center justify-center gap-3 shadow-xl transition-all transform active:scale-[0.99]"
             >
               <svg className="w-4 h-4" viewBox="0 0 24 24">
                 <path
@@ -164,7 +167,7 @@ export const AuthModal: React.FC<Props> = ({ isOpen, onClose }) => {
             {/* Divider */}
             <div className="relative flex items-center justify-center">
               <div className="border-t border-slate-800 w-full" />
-              <span className="bg-navy-900 px-3 text-[11px] text-slate-500 uppercase tracking-wider font-semibold">
+              <span className="bg-navy-950 px-3 text-[10px] text-slate-500 uppercase tracking-widest font-mono font-bold">
                 Or with Email
               </span>
             </div>
@@ -172,36 +175,36 @@ export const AuthModal: React.FC<Props> = ({ isOpen, onClose }) => {
             {/* Email / Password Form */}
             <form onSubmit={handleEmailAuth} className="space-y-3">
               <div className="relative">
-                <Mail className="w-4 h-4 text-slate-400 absolute left-3 top-2.5" />
+                <Mail className="w-4 h-4 text-slate-400 absolute left-3.5 top-3" />
                 <input
                   type="email"
                   required
                   value={email}
                   onChange={e => setEmail(e.target.value)}
-                  placeholder="commuter@example.com"
-                  className="w-full bg-navy-950 border border-slate-700 rounded-xl pl-9 pr-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-cyan-400"
+                  placeholder="name@example.com"
+                  className="w-full bg-navy-950/80 border border-slate-700/80 rounded-xl pl-10 pr-3.5 py-2.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-cyan-400 transition-all"
                 />
               </div>
 
               <div className="relative">
-                <Lock className="w-4 h-4 text-slate-400 absolute left-3 top-2.5" />
+                <Lock className="w-4 h-4 text-slate-400 absolute left-3.5 top-3" />
                 <input
                   type="password"
                   required
                   value={password}
                   onChange={e => setPassword(e.target.value)}
-                  placeholder="Password (min 6 characters)"
-                  className="w-full bg-navy-950 border border-slate-700 rounded-xl pl-9 pr-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-cyan-400"
+                  placeholder="Password (minimum 6 chars)"
+                  className="w-full bg-navy-950/80 border border-slate-700/80 rounded-xl pl-10 pr-3.5 py-2.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-cyan-400 transition-all"
                 />
               </div>
 
               <button
                 type="submit"
                 disabled={isLoading}
-                className="w-full py-2.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-navy-950 font-bold text-xs shadow-md transition-all active:scale-[0.99] disabled:opacity-50"
+                className="w-full py-3 rounded-xl bg-gradient-to-r from-cyan-500 to-teal-400 hover:from-cyan-400 text-navy-950 font-black text-xs shadow-glow-cyan transition-all transform active:scale-[0.99] disabled:opacity-50"
               >
                 {isLoading
-                  ? 'Verifying...'
+                  ? 'Verifying Token...'
                   : authMode === 'signin'
                   ? 'Sign In with Email'
                   : 'Create Firebase Account'}
@@ -211,7 +214,7 @@ export const AuthModal: React.FC<Props> = ({ isOpen, onClose }) => {
                 <button
                   type="button"
                   onClick={() => setAuthMode(authMode === 'signin' ? 'register' : 'signin')}
-                  className="text-[11px] text-cyan-400 hover:underline"
+                  className="text-[11px] text-cyan-400 hover:text-cyan-300 font-medium"
                 >
                   {authMode === 'signin'
                     ? "Don't have an account? Sign up"
@@ -221,29 +224,29 @@ export const AuthModal: React.FC<Props> = ({ isOpen, onClose }) => {
             </form>
 
             {/* Fast Demo Role Switcher for Hackathon Judges */}
-            <div className="pt-2 border-t border-slate-800">
-              <span className="block text-[10px] uppercase font-bold text-slate-500 mb-2">
-                Hackathon Demo Quick Switch
+            <div className="pt-3 border-t border-slate-800/80">
+              <span className="block text-[10px] uppercase font-bold text-slate-500 mb-2 font-mono">
+                Judge Fast Switch (Demo Personas)
               </span>
               <div className="grid grid-cols-3 gap-2">
                 <button
                   type="button"
                   onClick={() => handleDemoSelect('citizen')}
-                  className="p-2 rounded-lg bg-navy-950 hover:bg-navy-800 border border-slate-700 text-[11px] font-semibold text-slate-300"
+                  className="p-2 rounded-xl bg-navy-950/80 hover:bg-navy-800 border border-slate-700/80 text-[11px] font-semibold text-slate-300 transition-colors"
                 >
                   Citizen
                 </button>
                 <button
                   type="button"
                   onClick={() => handleDemoSelect('authority')}
-                  className="p-2 rounded-lg bg-indigo-950/80 hover:bg-indigo-900 border border-indigo-500/40 text-[11px] font-semibold text-indigo-300"
+                  className="p-2 rounded-xl bg-indigo-950/80 hover:bg-indigo-900 border border-indigo-500/40 text-[11px] font-semibold text-indigo-300 transition-colors"
                 >
                   Authority
                 </button>
                 <button
                   type="button"
                   onClick={() => handleDemoSelect('admin')}
-                  className="p-2 rounded-lg bg-purple-950/80 hover:bg-purple-900 border border-purple-500/40 text-[11px] font-semibold text-purple-300"
+                  className="p-2 rounded-xl bg-purple-950/80 hover:bg-purple-900 border border-purple-500/40 text-[11px] font-semibold text-purple-300 transition-colors"
                 >
                   Admin
                 </button>
@@ -255,3 +258,4 @@ export const AuthModal: React.FC<Props> = ({ isOpen, onClose }) => {
     </div>
   );
 };
+export default AuthModal;

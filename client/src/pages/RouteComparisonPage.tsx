@@ -13,7 +13,13 @@ import {
   CheckCircle2,
   ChevronRight,
   Info,
-  Car
+  Car,
+  Bike,
+  Zap,
+  ArrowUpDown,
+  TrendingDown,
+  Sparkles,
+  MapPin
 } from 'lucide-react';
 
 interface Props {
@@ -32,8 +38,15 @@ export const RouteComparisonPage: React.FC<Props> = ({ incidents, onSelectIncide
     { name: 'Palarivattom Bypass Junction', lat: 10.0035, lng: 76.3082 },
   ];
 
-  const [originIndex, setOriginIndex] = useState<number>(0); // Edappally Toll
-  const [destIndex, setDestIndex] = useState<number>(1);   // MG Road Shenoys
+  const vehicleOptions = [
+    { id: 'two_wheeler', label: 'Two-Wheeler', sub: 'Scooter / Bike', icon: Bike, riskNote: 'High pothole & spill vulnerability' },
+    { id: 'hatchback', label: 'Hatchback / Sedan', sub: 'Low Clearance', icon: Car, riskNote: 'Rim & bumper impact risk' },
+    { id: 'suv', label: 'SUV / Crossover', sub: 'High Ground Clearance', icon: Car, riskNote: 'Better pothole resilience' },
+    { id: 'electric', label: 'Electric Vehicle', sub: 'Battery Chassis', icon: Zap, riskNote: 'Undercarriage protection focus' },
+  ];
+
+  const [originIndex, setOriginIndex] = useState<number>(0);
+  const [destIndex, setDestIndex] = useState<number>(1);
   const [vehicleType, setVehicleType] = useState<string>('hatchback');
 
   const [routes, setRoutes] = useState<RouteOption[]>([]);
@@ -71,132 +84,178 @@ export const RouteComparisonPage: React.FC<Props> = ({ incidents, onSelectIncide
     calculate();
   }, [originIndex, destIndex, vehicleType]);
 
+  const handleSwap = () => {
+    const temp = originIndex;
+    setOriginIndex(destIndex);
+    setDestIndex(temp);
+  };
+
   const getQualityBadge = (score: 'A' | 'B' | 'C' | 'D') => {
     const map = {
-      A: 'bg-emerald-950 text-emerald-300 border-emerald-500/40',
-      B: 'bg-cyan-950 text-cyan-300 border-cyan-500/40',
-      C: 'bg-amber-950 text-amber-300 border-amber-500/40',
-      D: 'bg-red-950 text-red-300 border-red-500/40',
+      A: 'bg-emerald-950/80 text-emerald-300 border-emerald-500/50 shadow-emerald-950/50',
+      B: 'bg-cyan-950/80 text-cyan-300 border-cyan-500/50 shadow-cyan-950/50',
+      C: 'bg-amber-950/80 text-amber-300 border-amber-500/50 shadow-amber-950/50',
+      D: 'bg-red-950/80 text-red-300 border-red-500/50 shadow-red-950/50',
     };
     return (
-      <span className={`px-2 py-0.5 rounded font-mono font-bold text-xs border ${map[score]}`}>
-        Grade {score} Pavement
+      <span className={`px-2.5 py-1 rounded-lg font-mono font-bold text-xs border shadow-sm ${map[score]}`}>
+        Grade {score} Surface
       </span>
     );
   };
 
   return (
-    <div className="space-y-6">
-      {/* Title */}
-      <div>
-        <h1 className="text-2xl font-black text-white font-mono flex items-center gap-2">
-          <Navigation className="w-6 h-6 text-cyan-400" />
-          <span>Road Condition & Hazard-Aware Route Comparison</span>
-        </h1>
-        <p className="text-xs text-slate-400 mt-0.5">
-          Dynamic route scoring prioritizing verified defect avoidance and vehicle structural safety.
-        </p>
-      </div>
+    <div className="max-w-7xl mx-auto space-y-6 animate-fade-in">
+      {/* Top Header */}
+      <div className="glass-panel p-6 rounded-3xl relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-80 h-32 bg-cyan-500/10 blur-3xl pointer-events-none rounded-full" />
+        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div>
+            <div className="flex items-center gap-2 mb-2">
+              <span className="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold uppercase tracking-wider bg-cyan-500/10 text-cyan-400 border border-cyan-500/30">
+                Corridor Safety Engine
+              </span>
+              <span className="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold uppercase tracking-wider bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
+                120m Hazard Buffer
+              </span>
+            </div>
+            <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight flex items-center gap-3">
+              <Navigation className="w-7 h-7 text-cyan-400 drop-shadow-[0_0_12px_rgba(34,211,238,0.5)]" />
+              <span>Hazard-Aware Navigation & Route Scoring</span>
+            </h1>
+            <p className="text-xs sm:text-sm text-slate-400 mt-1 max-w-xl">
+              Compare transit corridors by real-world surface quality. We prioritize vehicle suspension health and flood avoidance over saving 90 seconds.
+            </p>
+          </div>
 
-      {/* Honest Scientific Disclaimer Alert */}
-      <div className="p-3.5 rounded-2xl bg-navy-900/90 border border-slate-800 flex items-start gap-3 text-xs text-slate-300">
-        <Info className="w-4 h-4 text-cyan-400 shrink-0 mt-0.5" />
-        <div>
-          <span className="font-semibold text-slate-200">Analytical Safety Assessment Notice:</span>
-          <p className="text-[11px] text-slate-400 mt-0.5">
-            {disclaimer || 'Route scoring evaluates reported potholes, flooded segments, and downed wires within a 120m transit corridor. It does not guarantee zero risk. Live driving conditions require continuous driver caution.'}
-          </p>
+          <div className="flex items-center gap-3 shrink-0">
+            <div className="p-3 rounded-2xl bg-navy-950/80 border border-slate-800 text-center">
+              <div className="text-[10px] font-mono text-slate-500 uppercase">Routing Engine</div>
+              <div className="text-sm font-bold text-cyan-400 font-mono">Google Maps GIS</div>
+            </div>
+          </div>
         </div>
       </div>
 
-      {/* Origin, Destination & Vehicle Selector */}
-      <div className="p-5 rounded-3xl bg-navy-900/90 border border-slate-800 shadow-xl space-y-4">
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+      {/* Route & Vehicle Configurator */}
+      <div className="glass-panel p-6 rounded-3xl space-y-5 border border-slate-800/80 shadow-2xl">
+        {/* Origin & Destination with Swap */}
+        <div className="grid grid-cols-1 md:grid-cols-11 gap-3 items-center">
           {/* Origin */}
-          <div>
-            <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">
-              Starting Location (Origin)
+          <div className="md:col-span-5 space-y-1.5">
+            <label className="text-xs font-bold uppercase tracking-wider text-slate-300 flex items-center gap-1.5">
+              <MapPin className="w-3.5 h-3.5 text-emerald-400" />
+              <span>Starting Origin</span>
             </label>
             <select
               value={originIndex}
               onChange={e => setOriginIndex(parseInt(e.target.value))}
-              className="w-full bg-navy-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-cyan-400"
+              className="w-full bg-navy-950/90 border border-slate-700/80 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm text-white focus:outline-none focus:border-cyan-400 transition-all cursor-pointer"
             >
               {presetLocations.map((loc, idx) => (
-                <option key={loc.name} value={idx} disabled={idx === destIndex}>
+                <option key={loc.name} value={idx} disabled={idx === destIndex} className="bg-navy-900 text-white">
                   {loc.name}
                 </option>
               ))}
             </select>
           </div>
 
+          {/* Swap Button */}
+          <div className="md:col-span-1 flex justify-center pt-5">
+            <button
+              type="button"
+              onClick={handleSwap}
+              className="p-2.5 rounded-xl glass-button-secondary text-cyan-400 hover:text-white transition-transform active:rotate-180"
+              title="Swap origin and destination"
+            >
+              <ArrowUpDown className="w-4 h-4" />
+            </button>
+          </div>
+
           {/* Destination */}
-          <div>
-            <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">
-              Destination Location
+          <div className="md:col-span-5 space-y-1.5">
+            <label className="text-xs font-bold uppercase tracking-wider text-slate-300 flex items-center gap-1.5">
+              <MapPin className="w-3.5 h-3.5 text-cyan-400" />
+              <span>Target Destination</span>
             </label>
             <select
               value={destIndex}
               onChange={e => setDestIndex(parseInt(e.target.value))}
-              className="w-full bg-navy-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-cyan-400"
+              className="w-full bg-navy-950/90 border border-slate-700/80 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm text-white focus:outline-none focus:border-cyan-400 transition-all cursor-pointer"
             >
               {presetLocations.map((loc, idx) => (
-                <option key={loc.name} value={idx} disabled={idx === originIndex}>
+                <option key={loc.name} value={idx} disabled={idx === originIndex} className="bg-navy-900 text-white">
                   {loc.name}
                 </option>
               ))}
             </select>
           </div>
-
-          {/* Vehicle Type (Fuel Consumption Inputs) */}
-          <div>
-            <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1.5 flex items-center gap-1">
-              <Car className="w-3.5 h-3.5 text-cyan-400" />
-              <span>Vehicle Profile (Fuel Model)</span>
-            </label>
-            <select
-              value={vehicleType}
-              onChange={e => setVehicleType(e.target.value)}
-              className="w-full bg-navy-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-cyan-400"
-            >
-              <option value="hatchback">Petrol Hatchback (~15 km/L avg)</option>
-              <option value="suv">SUV / Crossover (~10 km/L avg)</option>
-              <option value="two_wheeler">Two-Wheeler / Scooter (~45 km/L)</option>
-              <option value="electric">Electric Vehicle (~0.15 kWh/km)</option>
-            </select>
-          </div>
         </div>
 
-        {isDemoRouting && (
-          <div className="text-[11px] text-cyan-400 bg-cyan-950/40 p-2 rounded-lg border border-cyan-500/30 flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>
-            <span>OSRM Public Routing connected. Local geometric routing corridor active for Kerala demonstration area.</span>
+        {/* Tactile Vehicle Cards */}
+        <div className="space-y-2 pt-2 border-t border-slate-800/60">
+          <label className="text-xs font-bold uppercase tracking-wider text-slate-300 flex items-center gap-1.5">
+            <Car className="w-3.5 h-3.5 text-cyan-400" />
+            <span>Select Vehicle Dynamic Profile</span>
+          </label>
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5">
+            {vehicleOptions.map(veh => {
+              const isSelected = vehicleType === veh.id;
+              const IconComp = veh.icon;
+              return (
+                <button
+                  key={veh.id}
+                  type="button"
+                  onClick={() => setVehicleType(veh.id)}
+                  className={`p-3 rounded-2xl border text-left transition-all duration-200 ${
+                    isSelected
+                      ? 'bg-gradient-to-b from-cyan-950/80 to-navy-900 border-cyan-400 shadow-glow-cyan transform scale-[1.01]'
+                      : 'bg-navy-950/60 border-slate-800/80 hover:bg-navy-900/60 hover:border-slate-700'
+                  }`}
+                >
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="font-bold text-xs text-white flex items-center gap-1.5">
+                      <IconComp className={`w-3.5 h-3.5 ${isSelected ? 'text-cyan-400' : 'text-slate-400'}`} />
+                      <span>{veh.label}</span>
+                    </span>
+                    {isSelected && <span className="w-2 h-2 rounded-full bg-cyan-400 shadow-glow-cyan" />}
+                  </div>
+                  <div className="text-[10px] text-slate-400">{veh.sub}</div>
+                  <div className="text-[9px] text-cyan-400/80 font-mono mt-1">{veh.riskNote}</div>
+                </button>
+              );
+            })}
           </div>
-        )}
+        </div>
       </div>
 
-      {/* Main Grid: Map + Route Cards */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
+      {/* Main Grid: Interactive Map + Alternative Route Cards */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
         {/* Map with Route Polyline */}
-        <div className="lg:col-span-2">
+        <div className="lg:col-span-8 rounded-2xl overflow-hidden border border-slate-800/80 shadow-2xl glass-card">
           <MapView
             incidents={incidents}
             activeRoute={activeRoute}
             onSelectIncident={onSelectIncident}
-            heightClass="h-[520px]"
+            heightClass="h-[580px]"
           />
         </div>
 
-        {/* Route Cards */}
-        <div className="space-y-3">
+        {/* Alternative Routes Panel */}
+        <div className="lg:col-span-4 space-y-3">
           <div className="flex items-center justify-between text-xs font-bold text-slate-300 px-1">
-            <span>RECOMMENDED ALTERNATIVES ({routes.length})</span>
-            <span className="text-cyan-400 font-mono text-[11px]">HAZARD-WEIGHTED</span>
+            <span className="font-mono uppercase tracking-wider text-white">
+              Alternative Options ({routes.length})
+            </span>
+            <span className="text-cyan-400 font-mono text-[11px] bg-cyan-950/60 px-2 py-0.5 rounded border border-cyan-500/30">
+              HAZARD CORRIDOR
+            </span>
           </div>
 
           {isLoading ? (
-            <div className="p-8 text-center text-slate-500 text-xs">
-              Calculating hazard corridor ratings...
+            <div className="glass-panel p-12 text-center text-slate-400 text-xs rounded-2xl space-y-3">
+              <div className="w-8 h-8 rounded-full border-2 border-cyan-400 border-t-transparent animate-spin mx-auto" />
+              <p>Analyzing geospatial defect buffers across Kerala corridors...</p>
             </div>
           ) : (
             routes.map(r => {
@@ -207,57 +266,57 @@ export const RouteComparisonPage: React.FC<Props> = ({ incidents, onSelectIncide
                   onClick={() => setActiveRoute(r)}
                   className={`p-4 rounded-2xl border cursor-pointer transition-all ${
                     isSelected
-                      ? 'bg-navy-900 border-cyan-400 shadow-xl shadow-cyan-950 ring-1 ring-cyan-400/50'
-                      : 'bg-navy-900/60 border-slate-800 hover:bg-navy-800 hover:border-slate-700'
+                      ? 'bg-gradient-to-b from-cyan-950/70 to-navy-900 border-cyan-400 shadow-glow-cyan transform scale-[1.01]'
+                      : 'glass-card border-slate-800 hover:border-slate-700'
                   }`}
                 >
                   <div className="flex items-start justify-between gap-2">
                     <div>
-                      <div className="flex items-center gap-1.5">
+                      <div className="flex items-center gap-2">
                         <span className="text-xs uppercase font-extrabold text-white">
                           {r.name}
                         </span>
                         {r.preference === 'safest' && (
-                          <span className="px-2 py-0.5 rounded bg-emerald-950 text-emerald-300 font-bold text-[10px] border border-emerald-500/40">
-                            SAFEST
+                          <span className="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 font-bold text-[10px] border border-emerald-500/40">
+                            ★ RECOMMENDED
                           </span>
                         )}
                       </div>
-                      <p className="text-[11px] text-slate-300 mt-1 leading-snug">
+                      <p className="text-[11px] text-slate-300 mt-1 leading-relaxed">
                         {r.recommendationExplanation}
                       </p>
                     </div>
                     {getQualityBadge(r.routeQualityScore)}
                   </div>
 
-                  {/* Metrics Row */}
-                  <div className="grid grid-cols-3 gap-2 mt-3 pt-2.5 border-t border-slate-800 text-[11px]">
-                    <div>
-                      <span className="text-slate-500 block">Distance</span>
-                      <span className="font-bold text-slate-200">{r.distanceKm} km</span>
+                  {/* Metrics Badges */}
+                  <div className="grid grid-cols-3 gap-2 mt-3 pt-3 border-t border-slate-800 text-[11px] font-mono">
+                    <div className="p-2 rounded-xl bg-navy-950/70 border border-slate-800/80">
+                      <span className="text-slate-500 block text-[10px]">Distance</span>
+                      <span className="font-bold text-white text-xs">{r.distanceKm} km</span>
                     </div>
-                    <div>
-                      <span className="text-slate-500 block">Duration</span>
-                      <span className="font-bold text-slate-200">{r.durationMinutes} mins</span>
+                    <div className="p-2 rounded-xl bg-navy-950/70 border border-slate-800/80">
+                      <span className="text-slate-500 block text-[10px]">Duration</span>
+                      <span className="font-bold text-white text-xs">{r.durationMinutes}m</span>
                     </div>
-                    <div>
-                      <span className="text-slate-500 block">Est. Fuel</span>
-                      <span className="font-bold text-cyan-400">{r.estimatedFuelLiters} L</span>
+                    <div className="p-2 rounded-xl bg-navy-950/70 border border-slate-800/80">
+                      <span className="text-slate-500 block text-[10px]">Est. Fuel</span>
+                      <span className="font-bold text-cyan-400 text-xs">{r.estimatedFuelLiters} L</span>
                     </div>
                   </div>
 
                   {/* Hazards on this Route */}
-                  <div className="mt-2.5 pt-2 border-t border-slate-800/80 flex items-center justify-between text-[11px]">
+                  <div className="mt-3 pt-2.5 border-t border-slate-800/80 flex items-center justify-between text-[11px]">
                     <div className="flex items-center gap-1.5">
                       <AlertTriangle className={`w-3.5 h-3.5 ${r.nearbyVerifiedHazards === 0 ? 'text-emerald-400' : 'text-amber-400'}`} />
-                      <span className="text-slate-300">
+                      <span className="text-slate-300 font-medium">
                         {r.nearbyVerifiedHazards === 0
                           ? 'Zero Hazards in Corridor'
-                          : `${r.nearbyVerifiedHazards} Hazard(s) Nearby`}
+                          : `${r.nearbyVerifiedHazards} Hazard(s) in Buffer`}
                       </span>
                     </div>
                     <span className="text-[10px] text-slate-400 font-mono">
-                      Risk Index: <strong>{r.severityWeightedHazardScore}</strong>
+                      Risk Index: <strong className="text-white">{r.severityWeightedHazardScore}</strong>
                     </span>
                   </div>
                 </div>
@@ -269,3 +328,4 @@ export const RouteComparisonPage: React.FC<Props> = ({ incidents, onSelectIncide
     </div>
   );
 };
+export default RouteComparisonPage;

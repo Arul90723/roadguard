@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { AuthProvider, useAuth } from './context/AuthContext';
-import { DemoBanner } from './components/DemoBanner';
 import { ProximityAlertBanner } from './components/ProximityAlertBanner';
 import { Navbar } from './components/Navbar';
 import { IncidentModal } from './components/IncidentModal';
@@ -80,10 +79,7 @@ const MainApp: React.FC = () => {
   const criticalIncidents = incidents.filter(i => i.severity === 'critical' && i.status !== 'resolved');
 
   return (
-    <div className="min-h-screen bg-navy-950 text-slate-100 flex flex-col font-sans">
-      {/* Demo Banner */}
-      <DemoBanner />
-
+    <div className="min-h-screen bg-navy-950 text-slate-100 flex flex-col font-sans selection:bg-cyan-500/30 selection:text-cyan-200">
       {/* Critical Proximity Travel Warning Banner */}
       <ProximityAlertBanner
         criticalIncidents={criticalIncidents}
@@ -166,16 +162,23 @@ const MainApp: React.FC = () => {
       />
 
       {/* Footer */}
-      <footer className="border-t border-slate-800/80 bg-navy-900/60 py-6 text-xs text-slate-400">
-        <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3">
-          <div className="flex items-center gap-2">
-            <span className="font-bold text-white font-mono">ROADGUARD</span>
-            <span>— Smart Road Safety & Infrastructure Intelligence Platform</span>
+      <footer className="border-t border-slate-800/80 bg-navy-950/80 backdrop-blur-md py-8 text-xs text-slate-400 mt-auto">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <div className="w-6 h-6 rounded-lg bg-gradient-to-tr from-cyan-500 to-blue-600 flex items-center justify-center font-bold text-white text-[11px] shadow-glow-cyan">
+              RG
+            </div>
+            <div>
+              <span className="font-bold text-slate-200 tracking-wider">ROADGUARD</span>
+              <span className="text-slate-500 ml-2">Civic Road Safety & AI Infrastructure Intelligence</span>
+            </div>
           </div>
-          <div className="flex items-center gap-4 text-slate-400">
-            <span>Built for Hackathon Submission</span>
-            <span>•</span>
-            <span className="text-cyan-400">Sample Zone: Kochi, Kerala</span>
+          <div className="flex flex-wrap items-center gap-4 text-slate-400">
+            <span className="flex items-center gap-1.5"><span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>Live PostGIS Telemetry</span>
+            <span className="text-slate-700">•</span>
+            <span className="text-cyan-400 font-medium">Sample Zone: Kochi Metropolitan Area, Kerala</span>
+            <span className="text-slate-700">•</span>
+            <span>Civic Innovation Hackathon</span>
           </div>
         </div>
       </footer>
