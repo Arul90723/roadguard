@@ -9,8 +9,30 @@ import {
   SensorEvent,
   User
 } from '../types';
+import { auth } from './firebase';
 
 const API_BASE = '/api';
+
+async function getAuthHeaders(): Promise<Record<string, string>> {
+  const headers: Record<string, string> = {
+    'Content-Type': 'application/json',
+  };
+
+  if (auth.currentUser) {
+    try {
+      const token = await auth.currentUser.getIdToken();
+      headers['Authorization'] = `Bearer ${token}`;
+      return headers;
+    } catch (e) {
+      console.warn('Could not retrieve Firebase ID token', e);
+    }
+  }
+
+  // Fallback to active demo role for testing
+  const role = localStorage.getItem('roadguard_demo_role') || 'citizen';
+  headers['x-demo-role'] = role;
+  return headers;
+}
 
 export async function fetchHealth(): Promise<any> {
   const res = await fetch(`${API_BASE}/health`);
@@ -62,9 +84,10 @@ export async function submitIncidentReport(payload: {
   userName?: string;
   accuracyMeters?: number;
 }): Promise<{ success: boolean; isNewIncident: boolean; incident: Incident; message: string }> {
+  const headers = await getAuthHeaders();
   const res = await fetch(`${API_BASE}/incidents/report`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers,
     body: JSON.stringify(payload),
   });
 
@@ -87,9 +110,10 @@ export async function updateIncidentStatus(
     targetRepairDate?: string;
   }
 ): Promise<Incident> {
+  const headers = await getAuthHeaders();
   const res = await fetch(`${API_BASE}/incidents/${id}/status`, {
     method: 'PATCH',
-    headers: { 'Content-Type': 'application/json' },
+    headers,
     body: JSON.stringify(payload),
   });
 
@@ -110,9 +134,10 @@ export async function reopenIncident(
     evidencePhotoUrl?: string;
   }
 ): Promise<Incident> {
+  const headers = await getAuthHeaders();
   const res = await fetch(`${API_BASE}/incidents/${id}/reopen`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers,
     body: JSON.stringify(payload),
   });
 
@@ -135,9 +160,10 @@ export async function recordSensorEvent(payload: {
   confidence?: number;
   sampleWindow: any[];
 }): Promise<SensorEvent> {
+  const headers = await getAuthHeaders();
   const res = await fetch(`${API_BASE}/sensor/event`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers,
     body: JSON.stringify(payload),
   });
 

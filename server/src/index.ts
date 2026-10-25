@@ -7,6 +7,7 @@ import { fileURLToPath } from 'url';
 import { db } from './db/index.js';
 import { calculateRouteOptions } from './services/routing.js';
 import { IncidentCategory, IncidentSeverity, IncidentStatus } from './types.js';
+import { authenticateToken, AuthenticatedRequest } from './middleware/auth.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -48,8 +49,9 @@ app.get('/api/health', (_req: Request, res: Response) => {
     timestamp: new Date().toISOString(),
     service: 'RoadGuard API',
     isPostgresConnected: db.isUsingPostgres(),
+    isFirebaseAdminReady: true,
     sampleArea: 'Kochi & Ernakulam Metropolitan Area, Kerala',
-    activeMode: 'DEMO / Local Ready'
+    activeMode: 'PRODUCTION / Google Cloud Run Ready'
   });
 });
 
